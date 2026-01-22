@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Create Account</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root{--accent:#6366f1;--muted:#64748b}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+    .bg{position:fixed;inset:0;overflow:hidden;background:linear-gradient(180deg,#041025 0%,#071228 60%);}
+    .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.65;mix-blend-mode:screen}
+    .blob.a{width:380px;height:380px;left:-80px;top:-40px;background:radial-gradient(circle at 20% 20%,#06b6d4,#7c3aed)}
+    .blob.b{width:300px;height:300px;right:-40px;bottom:-60px;background:radial-gradient(circle at 80% 80%,#60a5fa,#06b6d4)}
+    .center{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .auth-card{position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));backdrop-filter:blur(6px);padding:28px;border-radius:14px;box-shadow:0 12px 50px rgba(2,6,23,.6);width:420px;color:#e6eef8;border:1px solid rgba(255,255,255,0.04)}
+    .auth-card h2{margin:0 0 6px;font-size:1.4rem}
+    .auth-card p.lead{margin:0 0 14px;color:var(--muted);font-size:.95rem}
+    .field{margin-bottom:10px}
+    .field label{display:block;font-size:.85rem;margin-bottom:6px;color:#cbd5e1}
+    .field input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#06b6d4);border:0;color:white;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(99,102,241,.18);transition:transform .14s ease,box-shadow .14s ease}
+    .btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(99,102,241,.22)}
+    .small-link{color:#93c5fd;text-decoration:none;font-size:.94rem}
+    .msg{margin-top:10px;color:#fecaca}
+    @media (max-width:480px){.auth-card{width:94%;padding:18px}}
+  </style>
+</head>
+<body>
+  <div class="bg">
+    <div class="blob a"></div>
+    <div class="blob b"></div>
+  </div>
+  <div class="center">
+    <div class="auth-card">
+      <h2>Create Account</h2>
+      <p class="lead">Create a free account to save your galleries and uploads.</p>
+
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" type="text" placeholder="Your name">
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@example.com">
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="Choose a password">
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+        <button id="createBtn" class="btn-primary">Create account</button>
+        <a href="signin.html" class="small-link">Sign in</a>
+      </div>
+
+      <p id="msg" class="msg" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_ENDPOINT = '';
+    async function postToSheet(payload){ if(!SHEET_ENDPOINT) return; try{ await fetch(SHEET_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); }catch(e){}
+    }
+
+    document.getElementById('createBtn').addEventListener('click', async ()=>{
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const msg = document.getElementById('msg'); msg.textContent='';
+      if(!email || !password) { msg.textContent = 'Email and password required'; return; }
+      try{
+        const res = await fetch('/api/signup',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,email,password})});
+        const data = await res.json();
+        if(res.ok){ localStorage.setItem('token', data.token); await postToSheet({event:'signup',email,name,ts:new Date().toISOString()}); location.href='/'; return; }
+        msg.textContent = data.error || 'Error creating account';
+        await postToSheet({event:'signup-failed',email,name,reason:data.error,ts:new Date().toISOString()});
+      }catch(e){ msg.textContent='Network error'; await postToSheet({event:'signup-error',email,name,ts:new Date().toISOString()}); }
+    });
+  </script>
+</body>
+</html>

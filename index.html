@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Image Gallery with Lightbox</title>
+	<link rel="stylesheet" href="styles.css">
+	<style>
+		/* Minimal page reset to keep everything self-contained if styles.css fails to load */
+		html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+	</style>
+</head>
+<body>
+	<main class="container">
+		<div class="topbar">
+			<h1 class="title">Gallery of moments</h1>
+			<div class="top-actions">
+								<button id="searchBtn" class="search-btn" aria-label="Search">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<circle cx="11" cy="11" r="7"></circle>
+										<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+									</svg>
+								</button>
+								<input id="searchInput" class="search-input" placeholder="Search images..." style="display:none">
+								<button id="signinBtn" class="cool-signin" aria-label="Sign in" title="Sign in">
+									<span class="icon">🔐</span>
+									<span>Sign in</span>
+								</button>
+				<button id="signoutBtn" class="small-btn" style="display:none">Sign out</button>
+				<button id="menuBtn" class="menu-btn" aria-expanded="false" aria-label="Open menu">☰</button>
+			</div>
+		</div>
+
+		<nav id="menu" class="menu" aria-hidden="true">
+			<button id="menuClose" class="menu-close" aria-label="Close menu">✕</button>
+			<ul class="menu-list">
+				<li class="menu-item" data-action="all">All</li>
+				<li class="menu-item create-category" data-action="create-category">+ Create Category</li>
+				<li class="menu-sep">Categories</li>
+				<!-- category items injected by JS -->
+				<div id="menuCategories"></div>
+            
+			</ul>
+		</nav>
+
+		<div class="categories">
+			<section class="category" data-category="food">
+				<div class="category-header">
+					<h2>Food</h2>
+					<button class="upload-btn" data-category="food" aria-label="Upload to Food"><span class="plus">+</span></button>
+				</div>
+				<div class="gallery" data-category="food">
+					<a class="gallery-item" href="#"><img src="https://picsum.photos/id/1080/400/300" alt="Pasta"></a>
+					<a class="gallery-item" href="#"><img src="https://picsum.photos/id/292/400/300" alt="Sushi"></a>
+				</div>
+			</section>
+
+			<section class="category" data-category="selfies">
+				<div class="category-header">
+					<h2>Selfies</h2>
+					<button class="upload-btn" data-category="selfies" aria-label="Upload to Selfies"><span class="plus">+</span></button>
+				</div>
+				<div class="gallery" data-category="selfies">
+					<a class="gallery-item" href="#"><img src="https://picsum.photos/id/237/400/300" alt="Smile"></a>
+				</div>
+			</section>
+
+			<section class="category" data-category="beauty">
+				<div class="category-header">
+					<h2>Beauty</h2>
+					<button class="upload-btn" data-category="beauty" aria-label="Upload to Beauty"><span class="plus">+</span></button>
+				</div>
+				<div class="gallery" data-category="beauty">
+					<a class="gallery-item" href="#"><img src="https://picsum.photos/id/1027/400/300" alt="Makeup"></a>
+				</div>
+			</section>
+
+			<section class="category" data-category="nature">
+				<div class="category-header">
+					<h2>Nature</h2>
+					<button class="upload-btn" data-category="nature" aria-label="Upload to Nature"><span class="plus">+</span></button>
+				</div>
+				<div class="gallery" data-category="nature">
+					<a class="gallery-item" href="#"><img src="https://picsum.photos/id/1018/400/300" alt="Mountains"></a>
+					<a class="gallery-item" href="#"><img src="https://picsum.photos/id/1024/400/300" alt="Lake"></a>
+				</div>
+			</section>
+
+			<section class="category" data-category="city">
+				<div class="category-header">
+					<h2>City</h2>
+					<button class="upload-btn" data-category="city" aria-label="Upload to City"><span class="plus">+</span></button>
+				</div>
+				<div class="gallery" data-category="city">
+					<a class="gallery-item" href="#"><img src="https://picsum.photos/id/1011/400/300" alt="Skyline"></a>
+				</div>
+			</section>
+		</div>
+
+		<input id="fileInput" type="file" accept="image/*" multiple style="display:none">
+
+		<!-- filtered results placeholder (used when filtering by place or moment) -->
+		<div id="filteredContainer" class="filtered-results" style="display:none"></div>
+	</main>
+
+	<!-- Lightbox overlay -->
+	<div id="lightbox" class="lightbox" aria-hidden="true">
+		<button class="lb-close" id="lbClose" aria-label="Close">✕</button>
+		<button class="lb-prev" id="lbPrev" aria-label="Previous">◀</button>
+		<div class="lb-content" id="lbContent">
+			<img id="lbImage" src="" alt="">
+			<p id="lbCaption" class="lb-caption"></p>
+		</div>
+		<button class="lb-next" id="lbNext" aria-label="Next">▶</button>
+	</div>
+
+	<script src="script.js"></script>
+</body>
+</html>
